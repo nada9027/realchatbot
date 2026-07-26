@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI, 들어봐</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="AI, 들어봐 첫 화면"><span class="mark">✦</span><span>AI, 들어봐</span></a>
+    <span id="headerStatus" class="header-status">학생 활동</span>
+  </header>
+
+  <main>
+    <section id="loginView" class="login-view">
+      <div class="login-copy">
+        <p class="eyebrow">LEARNING BY TEACHING</p>
+        <h1>AI에게<br><em>말해봐.</em></h1>
+        <p>오늘은 내가 AI 제자의 선생님.<br>내 말로 설명하고, 질문에 답하며 배워요.</p>
+      </div>
+
+      <form id="loginForm" class="login-card">
+        <div class="step">01 · 입장하기</div>
+        <h2>수업에 들어갈게요</h2>
+        <p>선생님에게 받은 수업 코드와<br>나의 익명 번호를 입력해 주세요.</p>
+        <label>수업 코드<input id="classCode" autocomplete="off" placeholder="예: ELEC-06" required /></label>
+        <label>익명 학습자 번호<input id="studentCode" autocomplete="off" placeholder="예: 06-12" required /></label>
+        <button class="primary-button" type="submit">활동 시작하기 <span>→</span></button>
+        <p class="privacy-note">🔒 이름·연락처 등 개인정보는 입력하지 않아요.</p>
+      </form>
+    </section>
+
+    <section id="activityView" class="activity-view is-hidden" aria-hidden="true">
+      <div class="activity-titlebar">
+        <div><p class="eyebrow">TODAY'S ACTIVITY</p><h1>전기의 작용</h1></div>
+        <div class="progress"><span>활동</span><strong>2</strong><i></i><i class="active"></i><i></i><i></i><span>/ 4</span></div>
+      </div>
+
+      <div class="activity-layout">
+        <section class="conversation card">
+          <header class="chat-head">
+            <div class="avatar">AI</div>
+            <div><h2>루미, 나의 AI 제자</h2><p><span class="online"></span>지금 설명을 듣고 있어요</p></div>
+            <button id="restart" class="restart" type="button" title="대화 처음부터 시작">↺</button>
+          </header>
+          <div class="activity-banner"><strong>오늘의 활동</strong><span>AI 제자가 이해할 수 있도록 전기 회로를 설명해 보세요.</span></div>
+          <div id="messages" class="messages" aria-live="polite"></div>
+          <div class="prompt-row"><button class="chip" type="button">내가 먼저 설명할게</button><button class="chip" type="button">예를 들어 볼게</button><button class="chip" type="button">힌트를 줘</button></div>
+          <form id="chatForm" class="composer">
+            <textarea id="input" rows="2" placeholder="AI 제자에게 설명해 보세요…"></textarea>
+            <button class="send" aria-label="보내기" type="submit">↑</button>
+          </form>
+        </section>
+
+        <aside class="mission card">
+          <div class="step">02 · 설명하기</div>
+          <h2>오늘의 미션</h2>
+          <div class="goal"><span>학습 목표</span><p>전기 회로의 구성과 전류가 흐르는 조건을 설명할 수 있다.</p></div>
+          <ol class="activity-steps"><li><span>1</span>내가 아는 내용을 설명하기</li><li><span>2</span>AI의 질문에 근거를 들어 답하기</li><li><span>3</span>AI의 헷갈린 생각 고쳐 주기</li></ol>
+          <div class="reflection">
+            <div class="step">03 · 성찰하기</div>
+            <h3>오늘 내가 가르친 것</h3>
+            <p>AI 제자가 새롭게 이해한 내용을 한 문장으로 적어 보세요.</p>
+            <textarea id="reflectionInput" rows="4" placeholder="예: 전류는 끊어지지 않은 회로에서 흐른다."></textarea>
+            <button id="saveReflection" class="outline-button" type="button">성찰 저장</button>
+          </div>
+          <p class="privacy-note">🔒 개인정보는 대화에 입력하지 마세요.</p>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>
