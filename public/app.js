@@ -41,6 +41,7 @@ async function requestBackend(payload) {
   const response = await fetch(`${BACKEND_URL}?${query.toString()}`, { method: 'GET', cache: 'no-store' });
   const data = await response.json();
   if (!data.ok) throw new Error(data.error || '백엔드 응답 오류');
+  if (payload.action === 'chat' && typeof data.reply !== 'string') throw new Error('Apps Script가 최신 doGet 코드를 사용하지 않습니다.');
   return data;
 }
 async function sendReply(studentMessage) {

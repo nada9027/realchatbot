@@ -8,12 +8,14 @@
 
 const SPREADSHEET_ID = '18ak5gw9-im_TXct7g0wPrcpF__UhptrK6KFjikb2igk';
 const SHEET_NAME = 'chat_logs';
+const BACKEND_VERSION = '2026-07-28-v3';
 
 function doGet(e) {
   const params = e && e.parameter;
   if (!params || !params.action) {
-    return json_({ ok: true, message: 'AI, 들어봐 backend is running.' });
+    return json_({ ok: true, version: BACKEND_VERSION, message: 'AI, 들어봐 backend is running.' });
   }
+  if (params.action === 'ping') return json_({ ok: true, version: BACKEND_VERSION, message: 'ping ok' });
   return handleRequest_(params);
 }
 
