@@ -1,6 +1,6 @@
 const $ = (id) => document.getElementById(id);
 // Apps Script 웹 앱 배포 후 생성된 /exec URL을 여기에 붙여 넣으세요.
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbz9FkqubkSmZE-AMKs0AT1n9iU3TnJZhep8207ilSqVf9M48gERSDLDnPmz2A8Rpz6I/exec';
+const BACKEND_URL = 'hhttps://script.google.com/macros/s/AKfycbz9FkqubkSmZE-AMKs0AT1n9iU3TnJZhep8207ilSqVf9M48gERSDLDnPmz2A8Rpz6I/exec';
 const SESSION_ID = crypto.randomUUID ? crypto.randomUUID() : `session-${Date.now()}`;
 let student = JSON.parse(sessionStorage.getItem('studentProfile') || 'null');
 let replyIndex = 0;
@@ -37,11 +37,8 @@ function setBackendStatus(text, connected = false) {
   $('backendStatus').classList.toggle('connected', connected);
 }
 async function requestBackend(payload) {
-  const response = await fetch(BACKEND_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(payload)
-  });
+  const query = new URLSearchParams(payload);
+  const response = await fetch(`${BACKEND_URL}?${query.toString()}`, { method: 'GET', cache: 'no-store' });
   const data = await response.json();
   if (!data.ok) throw new Error(data.error || '백엔드 응답 오류');
   return data;
