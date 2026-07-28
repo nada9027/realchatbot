@@ -1,16 +1,38 @@
 # AI 제자 교실
 
-논문의 ‘생성형 AI에게 설명하기’ 활동을 과목에 관계없이 적용할 수 있도록 만든 최소 실행형 프로토타입입니다. 교사가 왼쪽에서 과목, 학년, 단원, 학습 목표와 대표 오개념을 바꾸면 같은 대화 구조로 다른 수업을 운영할 수 있습니다.
+학생이 자신의 말로 설명하고, 챗봇과 대화한 뒤, 배운 내용을 성찰하는 정적 웹 프로토타입입니다. 학생의 반·번호와 대화·성찰 기록은 Supabase의 `learning_logs` 테이블에 저장합니다.
 
-## 실행
+## Supabase 연결
 
-```bash
-cp .env.example .env
-# .env에 OPENAI_API_KEY를 넣으면 실제 모델을 사용합니다.
-npm start
+1. Supabase에서 새 프로젝트를 만듭니다.
+2. Supabase 대시보드의 **SQL Editor**에서 `supabase/schema.sql` 전체를 실행합니다.
+3. **Project Settings → API**에서 Project URL과 `publishable` 또는 `anon` 키를 확인합니다.
+4. 루트의 `supabase-config.js`에 두 값을 입력합니다.
+
+```js
+window.SUPABASE_CONFIG = {
+  url: 'https://your-project-id.supabase.co',
+  anonKey: 'your-publishable-or-anon-key'
+};
 ```
 
-브라우저에서 `http://localhost:3000`을 엽니다. API 키가 없으면 논문의 전기 단원 예시를 이용한 데모 응답으로 실행됩니다.
+브라우저 코드에는 publishable/anon 키만 사용해야 합니다. `service_role` 키는 절대 입력하거나 GitHub에 올리지 않습니다.
+
+`schema.sql`은 학생에게 `INSERT`만 허용하고 `SELECT`, `UPDATE`, `DELETE` 정책은 만들지 않습니다. 따라서 학생은 기록을 추가할 수 있지만 다른 학생의 기록을 볼 수 없고, 연구자는 Supabase 대시보드에서 전체 기록을 확인할 수 있습니다.
+
+## 로컬 실행
+
+별도 서버 없이 `index.html`을 브라우저로 열어 화면을 확인할 수 있습니다. Supabase 저장까지 테스트하려면 루트 폴더에서 다음처럼 정적 서버를 실행하세요.
+
+```bash
+python3 -m http.server 8000
+```
+
+브라우저에서 `http://localhost:8000`을 엽니다.
+
+## Vercel 배포
+
+이 프로젝트는 빌드가 필요 없는 정적 웹사이트입니다. Vercel에서 GitHub 저장소를 연결한 뒤 Framework Preset은 `Other`, Build Command는 비워 두고 Output Directory는 `.`로 배포하면 됩니다. `supabase-config.js`가 루트에 있고 `index.html`과 같은 위치에 있어야 합니다.
 
 ## 설계 원칙
 
@@ -21,6 +43,10 @@ npm start
 - 실명·연락처 등 개인정보를 입력하지 않도록 화면에 고지
 - 과목/학년/단원/학습 목표를 교사가 직접 변경 가능
 
+## 저장되는 항목
+
+`learning_logs`에는 연구 코드, 반·번호, 세션 ID, 활동 유형, 학생 메시지, 챗봇 메시지, 성찰 내용, 프롬프트 버전, 저장 시각이 기록됩니다. 현재 챗봇 응답은 API가 아닌 데모용 고정 응답이며, `condition` 값은 `demo`로 저장됩니다.
+
 ## 연구 적용 전 점검
 
-실제 적용 전에는 교사용 로그인과 수업별 세션 분리, 대화 로그의 익명화·보관기간 설정, 개인정보 필터, 교사 검토 큐, 프롬프트 버전 관리, 전문가 내용타당도 검증, IRB 승인을 마련하세요. 현재 버전은 연구용 시범 프로토타입이며 학생 개인정보를 저장하지 않습니다.
+실제 적용 전에는 연구 코드 사용, 개인정보 최소 수집, 보관기간 설정, 입력값 검증, 프롬프트 버전 관리, 전문가 내용타당도 검증, IRB 승인을 마련하세요. 현재 버전은 연구용 시범 프로토타입입니다.
