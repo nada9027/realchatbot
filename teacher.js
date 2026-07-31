@@ -6,7 +6,7 @@ const supabaseClient = hasSupabaseConfig
   ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey)
   : null;
 
-const state = { logs: [], students: [], selectedKey: null };
+const state = { logs: [], students: [], selectedKey: null, viewMode: 'all' };
 const $ = (id) => document.getElementById(id);
 
 function setMessage(text, isError = false) {
@@ -63,11 +63,13 @@ function formatDate(value) {
 
 function renderConversation(student) {
   const logs = state.logs.filter((log) => studentKey(log) === student.key)
+    .filter((log) => state.viewMode === 'all' || log.event_type === 'reflection')
     .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
   $('emptyState').classList.add('hidden');
   $('conversationView').classList.remove('hidden');
   $('selectedStudent').textContent = student.label;
-  $('selectedSessionCount').textContent = `${student.sessions.size}개 세션 · ${logs.length}개 기록`;
+  const totalLogs = state.logs.filter((log) => studentKey(log) === student.key).length;
+  $('selectedSessionCount').textContent = `${student.sessions.size}개 세션 · ${logs.length}/${totalLogs}개 기록`;
   $('conversationTimeline').innerHTML = '';
 
   let currentSession = null;
@@ -88,6 +90,25 @@ function renderConversation(student) {
     if (log.reflection) card.append(makeTextBlock('학생 성찰', log.reflection, 'reflection-text'));
     $('conversationTimeline').append(card);
   });
+}
+
+function setViewMode(mode) {
+  state.viewMode = mode;
+  $('allRecordsTab').classList.toggle('active', mode === 'all');
+  $('reflectionTab').classList.toggle('active', mode === 'reflection');
+  const selected = state.students.find((student) => student.key === state.selectedKey);
+  if (selected) renderConversation(selected);
+}
+
+function saveSelectedStudentAsPdf() {
+  if (!state.selectedKey) {
+    setMessage('먼저 학생을 선택해 주세요.', true);
+    return;
+  }
+  setMessage('인쇄 창에서 “PDF로 저장”을 선택하세요.');
+  document.body.classList.add('print-mode');
+  window.print();
+  window.setTimeout(() => document.body.classList.remove('print-mode'), 500);
 }
 
 function makeTextBlock(label, text, className) {
@@ -127,6 +148,9 @@ async function init() {
 
 $('refreshButton').addEventListener('click', loadLogs);
 $('studentSearch').addEventListener('input', renderStudentList);
+$('allRecordsTab').addEventListener('click', () => setViewMode('all'));
+$('reflectionTab').addEventListener('click', () => setViewMode('reflection'));
+$('printPdfButton').addEventListener('click', saveSelectedStudentAsPdf);
 $('logoutButton').addEventListener('click', async () => {
   await supabaseClient.auth.signOut();
   window.location.replace('./teacher-login.html');

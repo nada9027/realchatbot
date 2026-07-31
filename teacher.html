@@ -27,7 +27,8 @@
       <section class="conversation-panel">
         <div id="emptyState" class="empty-state"><div class="empty-icon">✦</div><h2>학생을 선택해 주세요</h2><p>왼쪽 목록에서 학생을 선택하면<br>대화 기록이 이곳에 표시됩니다.</p></div>
         <div id="conversationView" class="conversation-view hidden">
-          <div class="conversation-heading"><div><p class="teacher-eyebrow">STUDENT RECORD</p><h2 id="selectedStudent"></h2></div><span id="selectedSessionCount" class="record-pill"></span></div>
+          <div class="conversation-heading"><div><p class="teacher-eyebrow">STUDENT RECORD</p><h2 id="selectedStudent"></h2></div><div class="conversation-actions"><span id="selectedSessionCount" class="record-pill"></span><button id="printPdfButton" class="teacher-button teacher-button-light">PDF 저장 <span>↓</span></button></div></div>
+          <div class="record-tabs" role="tablist"><button id="allRecordsTab" class="record-tab active" type="button" role="tab">전체 대화</button><button id="reflectionTab" class="record-tab" type="button" role="tab">성찰만 보기</button></div>
           <div id="conversationTimeline" class="conversation-timeline"></div>
         </div>
       </section>
