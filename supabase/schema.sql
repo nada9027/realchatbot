@@ -19,7 +19,7 @@ drop policy if exists "students can insert logs" on public.learning_logs;
 create policy "students can insert logs"
 on public.learning_logs
 for insert
-to anon
+to anon, authenticated
 with check (true);
 
 -- 교사 계정 목록. Supabase Authentication에서 만든 교사의 user id를 등록합니다.

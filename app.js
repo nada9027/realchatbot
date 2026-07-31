@@ -162,7 +162,7 @@ async function sendReply(studentMessage) {
     });
     setStatus('SUPABASE 저장됨', true);
   } catch (error) {
-    setStatus('AI 응답 완료 · 저장 오류', false);
+    setStatus(`AI 응답 완료 · 저장 오류: ${error.message || '원인 확인 필요'}`, false);
     console.error('Supabase chat log error:', error);
   }
 }
@@ -204,7 +204,7 @@ $('saveReflection').addEventListener('click', async () => {
     button.textContent = '성찰 저장 완료';
   } catch (error) {
     button.disabled = false;
-    $('reflectionState').textContent = '저장 오류 확인 필요';
+    $('reflectionState').textContent = `저장 오류: ${error.message || '원인 확인 필요'}`;
     console.error('Supabase reflection log error:', error);
   }
 });
