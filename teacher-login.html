@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>교사 로그인 · AI, 들어봐</title>
+  <link rel="stylesheet" href="./teacher.css" />
+</head>
+<body class="teacher-page">
+  <main class="teacher-login-wrap">
+    <section class="teacher-login-card">
+      <a class="teacher-brand" href="./index.html">✦ AI, 들어봐</a>
+      <p class="teacher-eyebrow">RESEARCHER SPACE</p>
+      <h1>학생들의<br><span>배움을 살펴보세요.</span></h1>
+      <p class="teacher-muted">교사 계정으로 로그인하면 학생별 대화 기록과 성찰을 확인할 수 있습니다.</p>
+      <form id="teacherLoginForm" class="teacher-form">
+        <label>이메일<input id="teacherEmail" type="email" autocomplete="username" required placeholder="teacher@example.com" /></label>
+        <label>비밀번호<input id="teacherPassword" type="password" autocomplete="current-password" required placeholder="비밀번호" /></label>
+        <button class="teacher-button teacher-button-dark" type="submit">교사 화면 들어가기 <span>↗</span></button>
+      </form>
+      <p id="teacherLoginMessage" class="teacher-message" role="alert"></p>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./teacher-login.js"></script>
+</body>
+</html>

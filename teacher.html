@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>학생 기록 · AI, 들어봐</title>
+  <link rel="stylesheet" href="./teacher.css" />
+</head>
+<body class="teacher-page">
+  <header class="teacher-nav">
+    <a class="teacher-brand" href="./index.html">✦ AI, 들어봐</a>
+    <div class="teacher-nav-right"><span id="teacherEmailLabel"></span><button id="logoutButton" class="teacher-text-button">로그아웃</button></div>
+  </header>
+
+  <main class="dashboard-shell">
+    <div class="dashboard-heading">
+      <div><p class="teacher-eyebrow">RESEARCHER SPACE</p><h1>학생들의 학습 기록</h1><p class="teacher-muted">학생을 선택하면 대화와 성찰을 시간순으로 확인할 수 있습니다.</p></div>
+      <button id="refreshButton" class="teacher-button teacher-button-light">새로고침 <span>↻</span></button>
+    </div>
+    <p id="dashboardMessage" class="teacher-message" role="status"></p>
+    <section class="dashboard-grid">
+      <aside class="student-list-panel">
+        <div class="panel-heading"><h2>학생 목록</h2><span id="studentCount">0명</span></div>
+        <input id="studentSearch" class="student-search" type="search" placeholder="반 또는 번호 검색" />
+        <div id="studentList" class="student-list"></div>
+      </aside>
+      <section class="conversation-panel">
+        <div id="emptyState" class="empty-state"><div class="empty-icon">✦</div><h2>학생을 선택해 주세요</h2><p>왼쪽 목록에서 학생을 선택하면<br>대화 기록이 이곳에 표시됩니다.</p></div>
+        <div id="conversationView" class="conversation-view hidden">
+          <div class="conversation-heading"><div><p class="teacher-eyebrow">STUDENT RECORD</p><h2 id="selectedStudent"></h2></div><span id="selectedSessionCount" class="record-pill"></span></div>
+          <div id="conversationTimeline" class="conversation-timeline"></div>
+        </div>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./teacher.js"></script>
+</body>
+</html>

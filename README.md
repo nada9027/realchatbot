@@ -20,6 +20,24 @@ window.SUPABASE_CONFIG = {
 
 `schema.sql`은 학생에게 `INSERT`만 허용하고 `SELECT`, `UPDATE`, `DELETE` 정책은 만들지 않습니다. 따라서 학생은 기록을 추가할 수 있지만 다른 학생의 기록을 볼 수 없고, 연구자는 Supabase 대시보드에서 전체 기록을 확인할 수 있습니다.
 
+## 교사 기록 화면
+
+학생별 대화 기록을 웹페이지에서 확인하려면 다음 순서로 설정합니다.
+
+1. Supabase 대시보드의 **Authentication → Users**에서 교사 이메일과 비밀번호 계정을 만듭니다.
+2. 해당 사용자의 UUID를 복사합니다.
+3. SQL Editor에서 다음을 실행합니다. `교사_UUID` 부분만 실제 UUID로 바꿉니다.
+
+```sql
+insert into public.teacher_profiles (user_id)
+values ('교사_UUID');
+```
+
+4. `teacher-login.html`에서 교사 계정으로 로그인합니다.
+5. 로그인 후 `teacher.html`에서 학생 목록을 선택하면 채팅과 성찰을 시간순으로 볼 수 있습니다.
+
+학생은 여전히 `INSERT`만 할 수 있고, 교사 계정만 `learning_logs`를 조회할 수 있습니다.
+
 ## 로컬 실행
 
 별도 서버 없이 `index.html`을 브라우저로 열어 화면을 확인할 수 있습니다. Supabase 저장까지 테스트하려면 루트 폴더에서 다음처럼 정적 서버를 실행하세요.
