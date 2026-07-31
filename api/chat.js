@@ -68,8 +68,9 @@ export default async function handler(request, response) {
   ];
 
   try {
+    const model = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
     const geminiResponse = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
       {
         method: 'POST',
         headers: {
@@ -82,7 +83,6 @@ export default async function handler(request, response) {
           },
           contents,
           generationConfig: {
-            temperature: selectedCondition === 'misconception' ? 0.75 : 0.55,
             maxOutputTokens: 300
           }
         })

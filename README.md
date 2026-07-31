@@ -58,6 +58,7 @@ Gemini API를 사용하려면 Vercel 프로젝트의 **Settings → Environment 
 
 ```text
 GEMINI_API_KEY=Google AI Studio에서 발급한 키
+GEMINI_MODEL=gemini-3.5-flash-lite
 ```
 
 `GEMINI_API_KEY`는 `api/chat.js`에서만 읽습니다. 프론트엔드 파일이나 GitHub에 키를 작성하지 않습니다. 환경변수를 추가하거나 수정한 뒤에는 새 배포가 필요합니다.
