@@ -12,12 +12,34 @@ const SESSION_ID = crypto.randomUUID ? crypto.randomUUID() : `session-${Date.now
 let student = JSON.parse(sessionStorage.getItem('studentProfile') || 'null');
 let replyIndex = 0;
 
-const first = '안녕! 나는 전기의 작용을 아직 잘 모르는 AI 제자 글꽃이야.\n전기가 흐르려면 회로가 어떻게 되어야 하는지 가르쳐 줄래?';
-const replies = [
-  '아, 전기가 흐르는 길이 이어져야 하는구나. 그런데 전구가 전지의 한쪽에만 연결되어도 켜질까?',
-  '조금 더 알 것 같아. 왜 전지와 전구가 모두 연결되어야 하는지 예를 들어 설명해 줄래?',
-  '고마워! 이제 내가 이해한 내용을 정리해 볼게. 빠진 부분이 있으면 고쳐 줘.'
-];
+const botProfiles = {
+  geul: {
+    label: '글챗봇',
+    condition: 'misconception',
+    promptVersion: 'geul-misconception-v1',
+    first: '안녕! 나는 전기의 작용을 아직 잘 모르는 AI 제자 글이야.\n전지가 전구의 한쪽에만 연결되어도 전기가 흐를 수 있는지 가르쳐 줄래?',
+    replies: [
+      '음, 전구가 전지에 연결되어 있으니까 한쪽 단자만 연결해도 전기가 갈 수 있지 않을까? 왜 안 되는지 설명해 줄래?',
+      '전기가 흐르는 길이 이어져야 한다는 말은 알겠어. 그런데 전구가 전지와 연결되어 있으면 길이 있는 것 아닌가?',
+      '네 설명을 듣고 보니 내 생각에 빠진 부분이 있는 것 같아. 전류가 흐르는 조건을 다시 정리해서 말해 줄래?'
+    ]
+  },
+  kkot: {
+    label: '꽃챗봇',
+    condition: 'comparison',
+    promptVersion: 'kkot-general-v1',
+    first: '안녕! 나는 전기의 작용을 함께 공부하는 AI 제자 꽃이야.\n전기가 흐르려면 회로가 어떻게 되어야 하는지 네 말로 설명해 줄래?',
+    replies: [
+      '설명을 잘 들었어. 전기가 흐르는 조건을 회로의 연결 상태와 관련지어 다시 말해 볼래?',
+      '좋은 설명이야. 전지와 전구를 연결한 생활 속 예시를 하나 들어 줄 수 있어?',
+      '이해한 내용을 정리해 볼게. 빠진 부분이나 더 정확하게 고칠 부분이 있으면 알려 줘.'
+    ]
+  }
+};
+
+function getBotProfile() {
+  return botProfiles[student?.botType] || botProfiles.geul;
+}
 
 function addMessage(role, text, note = '') {
   const bubble = document.createElement('div');
@@ -36,7 +58,8 @@ function addMessage(role, text, note = '') {
 function resetChat() {
   $('messages').innerHTML = '';
   replyIndex = 0;
-  addMessage('ai', first, '💡 설명 팁 · “왜 그런지”와 생활 속 예시를 함께 말해 보세요.');
+  const profile = getBotProfile();
+  addMessage('ai', profile.first, '💡 설명 팁 · “왜 그런지”와 생활 속 예시를 함께 말해 보세요.');
 }
 
 function setStatus(text, connected = false) {
@@ -48,6 +71,12 @@ function showStudentArea() {
   if (!student) return;
   $('loginGate').classList.add('hidden');
   $('studentBadge').textContent = `${student.classNumber}반 ${student.studentNumber}번`;
+  const profile = getBotProfile();
+  $('studentBadge').textContent += ` · ${profile.label}`;
+  $('chatbotName').textContent = `${profile.label}, 나의 AI 제자`;
+  $('activityDescription').textContent = profile.condition === 'misconception'
+    ? '오개념을 가진 AI 제자 글에게 전기 회로를 설명해 보세요.'
+    : '일반적인 AI 제자 꽃에게 전기 회로를 설명해 보세요.';
   $('studentBadge').title = '클릭하면 다른 학생으로 바꿀 수 있어요';
   $('studentBadge').onclick = () => {
     sessionStorage.removeItem('studentProfile');
@@ -59,8 +88,9 @@ function loginStudent(event) {
   event.preventDefault();
   const classNumber = $('classInput').value.trim();
   const studentNumber = $('numberInput').value.trim();
-  if (!classNumber || !studentNumber) return;
-  student = { classNumber, studentNumber };
+  const botType = document.querySelector('input[name="botType"]:checked')?.value;
+  if (!classNumber || !studentNumber || !botType) return;
+  student = { classNumber, studentNumber, botType };
   sessionStorage.setItem('studentProfile', JSON.stringify(student));
   showStudentArea();
 }
@@ -71,20 +101,21 @@ async function saveLog(data) {
     research_code: `${data.classNumber}-${data.studentNumber}`,
     class_number: data.classNumber,
     student_number: data.studentNumber,
-    condition: 'demo',
+    condition: data.condition || getBotProfile().condition,
     session_id: SESSION_ID,
     event_type: data.eventType,
     student_message: data.studentMessage || null,
     ai_message: data.aiMessage || null,
     reflection: data.reflection || null,
-    prompt_version: 'demo-static-v1'
+    prompt_version: data.promptVersion || getBotProfile().promptVersion
   });
   if (error) throw error;
   return true;
 }
 
 async function sendReply(studentMessage) {
-  const reply = replies[replyIndex % replies.length];
+  const profile = getBotProfile();
+  const reply = profile.replies[replyIndex % profile.replies.length];
   addMessage('ai', reply);
   replyIndex += 1;
 
@@ -100,7 +131,9 @@ async function sendReply(studentMessage) {
       studentNumber: student.studentNumber,
       eventType: 'chat',
       studentMessage,
-      aiMessage: reply
+      aiMessage: reply,
+      condition: profile.condition,
+      promptVersion: profile.promptVersion
     });
     setStatus('SUPABASE 저장됨', true);
   } catch (error) {
@@ -137,7 +170,9 @@ $('saveReflection').addEventListener('click', async () => {
       classNumber: student.classNumber,
       studentNumber: student.studentNumber,
       eventType: 'reflection',
-      reflection
+      reflection,
+      condition: getBotProfile().condition,
+      promptVersion: getBotProfile().promptVersion
     });
     $('reflectionState').textContent = '저장했어요 ✓';
     $('reflectionState').classList.add('saved');

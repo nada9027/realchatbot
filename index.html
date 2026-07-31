@@ -14,6 +14,11 @@
       <h1 id="loginTitle">오늘의 학습을<br><span>시작해 볼까요?</span></h1>
       <p>반과 번호를 입력하면 나의 대화 기록과 성찰이<br>학생별로 안전하게 저장됩니다.</p>
       <form id="loginForm" class="login-form">
+        <fieldset class="bot-selection">
+          <legend>오늘 만날 AI 제자를 선택해 주세요</legend>
+          <label class="bot-option misconception-option"><input type="radio" name="botType" value="geul" /><span><strong>글챗봇</strong><small>오개념을 가진 AI 제자<br>내가 설명하며 생각을 바꿔요</small></span></label>
+          <label class="bot-option comparison-option"><input type="radio" name="botType" value="kkot" /><span><strong>꽃챗봇</strong><small>일반적인 학습 지원 챗봇<br>질문하고 피드백을 받아요</small></span></label>
+        </fieldset>
         <label>반<input id="classInput" inputmode="numeric" required maxlength="2" placeholder="예: 3" /></label>
         <label>번호<input id="numberInput" inputmode="numeric" required maxlength="2" placeholder="예: 15" /></label>
         <button class="button button-dark" type="submit">학습 시작 <span>↗</span></button>
@@ -54,10 +59,10 @@
     </section>
 
     <section id="activity" class="activity-band page-width">
-      <div class="activity-heading"><div><div class="eyebrow">TODAY'S ACTIVITY</div><h2>전기의 작용</h2><p>AI 제자 글꽃이가 이해할 수 있도록 전기 회로를 설명해 보세요.</p></div><span id="backendStatus" class="demo-badge">SUPABASE 연결 대기</span></div>
+      <div class="activity-heading"><div><div class="eyebrow">TODAY'S ACTIVITY</div><h2>전기의 작용</h2><p id="activityDescription">AI 제자에게 전기 회로를 설명해 보세요.</p></div><span id="backendStatus" class="demo-badge">SUPABASE 연결 대기</span></div>
       <div class="activity-layout">
         <section class="chat-panel">
-          <header class="chat-header"><div class="avatar">AI</div><div><strong>글꽃이, 나의 AI 제자</strong><small><i></i> 지금 설명을 듣고 있어요</small></div><button id="resetChat" class="round-button" aria-label="대화 초기화">↺</button></header>
+          <header class="chat-header"><div class="avatar">AI</div><div><strong id="chatbotName">AI 제자</strong><small><i></i> 지금 설명을 듣고 있어요</small></div><button id="resetChat" class="round-button" aria-label="대화 초기화">↺</button></header>
           <div id="messages" class="messages"></div>
           <div class="quick-row"><button class="quick">내가 먼저 설명할게</button><button class="quick">예를 들어 볼게</button><button class="quick">힌트를 줘</button></div>
           <form id="chatForm" class="composer"><textarea id="chatInput" rows="1" placeholder="AI 제자에게 설명해 보세요…"></textarea><button class="send-button" aria-label="메시지 보내기">↑</button></form>
