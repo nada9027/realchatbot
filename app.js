@@ -11,6 +11,7 @@ const supabaseClient = hasSupabaseConfig
 const SESSION_ID = crypto.randomUUID ? crypto.randomUUID() : `session-${Date.now()}`;
 let student = JSON.parse(sessionStorage.getItem('studentProfile') || 'null');
 let replyIndex = 0;
+let chatHistory = [];
 
 const botProfiles = {
   geul: {
@@ -60,6 +61,7 @@ function resetChat() {
   replyIndex = 0;
   const profile = getBotProfile();
   addMessage('ai', profile.first, '💡 설명 팁 · “왜 그런지”와 생활 속 예시를 함께 말해 보세요.');
+  chatHistory = [];
 }
 
 function setStatus(text, connected = false) {
@@ -115,17 +117,32 @@ async function saveLog(data) {
 
 async function sendReply(studentMessage) {
   const profile = getBotProfile();
-  const reply = profile.replies[replyIndex % profile.replies.length];
-  addMessage('ai', reply);
-  replyIndex += 1;
-
   if (!supabaseClient) {
     setStatus('SUPABASE 설정 필요');
     return;
   }
 
-  setStatus('저장 중…');
+  setStatus('AI가 답변을 만드는 중…');
   try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: studentMessage,
+        condition: profile.condition,
+        history: chatHistory
+      })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'AI 응답 오류');
+
+    const reply = result.answer;
+    addMessage('ai', reply);
+    replyIndex += 1;
+    chatHistory.push({ role: 'user', parts: [{ text: studentMessage }] });
+    chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+
+    setStatus('AI 응답 · 저장 중…');
     await saveLog({
       classNumber: student.classNumber,
       studentNumber: student.studentNumber,
@@ -137,8 +154,9 @@ async function sendReply(studentMessage) {
     });
     setStatus('SUPABASE 저장됨', true);
   } catch (error) {
-    setStatus('저장 오류 확인 필요');
-    console.error('Supabase chat log error:', error);
+    setStatus('AI 응답 오류 확인 필요');
+    addMessage('ai', '잠시 문제가 생겼어요. 다시 한 번 보내 주세요.');
+    console.error('AI chat error:', error);
   }
 }
 

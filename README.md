@@ -52,6 +52,18 @@ python3 -m http.server 8000
 
 이 프로젝트는 빌드가 필요 없는 정적 웹사이트입니다. Vercel에서 GitHub 저장소를 연결한 뒤 Framework Preset은 `Other`, Build Command는 비워 두고 Output Directory는 `.`로 배포하면 됩니다. `supabase-config.js`가 루트에 있고 `index.html`과 같은 위치에 있어야 합니다.
 
+## Gemini API 연결
+
+Gemini API를 사용하려면 Vercel 프로젝트의 **Settings → Environment Variables**에 다음 변수를 추가합니다.
+
+```text
+GEMINI_API_KEY=Google AI Studio에서 발급한 키
+```
+
+`GEMINI_API_KEY`는 `api/chat.js`에서만 읽습니다. 프론트엔드 파일이나 GitHub에 키를 작성하지 않습니다. 환경변수를 추가하거나 수정한 뒤에는 새 배포가 필요합니다.
+
+학생이 선택한 `글챗봇`은 `misconception`, `꽃챗봇`은 `comparison` 조건으로 `api/chat.js`의 서로 다른 시스템 프롬프트를 사용합니다. API 응답이 생성된 뒤 학생 메시지와 AI 응답은 기존처럼 Supabase에 저장됩니다.
+
 ## 설계 원칙
 
 - AI가 정답을 먼저 설명하지 않고 학생의 설명을 기다림
