@@ -18,6 +18,10 @@
       <button id="refreshButton" class="teacher-button teacher-button-light">새로고침 <span>↻</span></button>
     </div>
     <p id="dashboardMessage" class="teacher-message" role="status"></p>
+    <div class="dashboard-tabs" role="tablist">
+      <button id="studentsViewTab" class="dashboard-tab active" type="button" role="tab">학생별 기록</button>
+      <button id="reflectionWallTab" class="dashboard-tab" type="button" role="tab">전체 성찰 모아보기</button>
+    </div>
     <section class="dashboard-grid">
       <aside class="student-list-panel">
         <div class="panel-heading"><h2>학생 목록</h2><span id="studentCount">0명</span></div>
@@ -32,6 +36,10 @@
           <div id="conversationTimeline" class="conversation-timeline"></div>
         </div>
       </section>
+    </section>
+    <section id="reflectionWall" class="reflection-wall hidden">
+      <div class="wall-heading"><div><p class="teacher-eyebrow">REFLECTION WALL</p><h2>학생들이 남긴 배움</h2><p class="teacher-muted">모든 학생의 성찰을 한곳에서 확인할 수 있습니다.</p></div><span id="reflectionCount" class="record-pill"></span></div>
+      <div id="reflectionCards" class="reflection-cards"></div>
     </section>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

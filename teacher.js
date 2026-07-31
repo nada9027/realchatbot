@@ -6,7 +6,7 @@ const supabaseClient = hasSupabaseConfig
   ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey)
   : null;
 
-const state = { logs: [], students: [], selectedKey: null, viewMode: 'all' };
+const state = { logs: [], students: [], selectedKey: null, viewMode: 'all', dashboardView: 'students' };
 const $ = (id) => document.getElementById(id);
 
 function setMessage(text, isError = false) {
@@ -92,6 +92,35 @@ function renderConversation(student) {
   });
 }
 
+function renderReflectionWall() {
+  const reflections = state.logs
+    .filter((log) => log.event_type === 'reflection' && log.reflection)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  $('reflectionCount').textContent = `${reflections.length}개 성찰`;
+  $('reflectionCards').innerHTML = '';
+  if (!reflections.length) {
+    $('reflectionCards').innerHTML = '<p class="wall-empty">아직 제출된 성찰이 없습니다.</p>';
+    return;
+  }
+  reflections.forEach((log) => {
+    const card = document.createElement('article');
+    card.className = 'reflection-wall-card';
+    card.innerHTML = `<div class="wall-card-top"><strong>${studentLabel(log)}</strong><time>${formatDate(log.created_at)}</time></div><p></p><div class="wall-card-footer">세션 ${log.session_id.slice(0, 8)}</div>`;
+    card.querySelector('p').textContent = log.reflection;
+    $('reflectionCards').append(card);
+  });
+}
+
+function setDashboardView(view) {
+  state.dashboardView = view;
+  const studentsView = view === 'students';
+  $('studentsViewTab').classList.toggle('active', studentsView);
+  $('reflectionWallTab').classList.toggle('active', !studentsView);
+  document.querySelector('.dashboard-grid').classList.toggle('hidden', !studentsView);
+  $('reflectionWall').classList.toggle('hidden', studentsView);
+  if (!studentsView) renderReflectionWall();
+}
+
 function setViewMode(mode) {
   state.viewMode = mode;
   $('allRecordsTab').classList.toggle('active', mode === 'all');
@@ -131,6 +160,7 @@ async function loadLogs() {
   state.logs = data || [];
   state.students = buildStudents(state.logs);
   renderStudentList();
+  renderReflectionWall();
   if (state.selectedKey) {
     const selected = state.students.find((student) => student.key === state.selectedKey);
     if (selected) renderConversation(selected);
@@ -148,6 +178,8 @@ async function init() {
 
 $('refreshButton').addEventListener('click', loadLogs);
 $('studentSearch').addEventListener('input', renderStudentList);
+$('studentsViewTab').addEventListener('click', () => setDashboardView('students'));
+$('reflectionWallTab').addEventListener('click', () => setDashboardView('reflections'));
 $('allRecordsTab').addEventListener('click', () => setViewMode('all'));
 $('reflectionTab').addEventListener('click', () => setViewMode('reflection'));
 $('printPdfButton').addEventListener('click', saveSelectedStudentAsPdf);
