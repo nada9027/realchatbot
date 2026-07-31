@@ -123,6 +123,7 @@ async function sendReply(studentMessage) {
   }
 
   setStatus('AI가 답변을 만드는 중…');
+  let reply;
   try {
     const response = await fetch('/api/chat', {
       method: 'POST',
@@ -136,13 +137,20 @@ async function sendReply(studentMessage) {
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || 'AI 응답 오류');
 
-    const reply = result.answer;
+    reply = result.answer;
     addMessage('ai', reply);
     replyIndex += 1;
     chatHistory.push({ role: 'user', parts: [{ text: studentMessage }] });
     chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+  } catch (error) {
+    setStatus('AI 응답 오류 확인 필요');
+    addMessage('ai', '잠시 문제가 생겼어요. 다시 한 번 보내 주세요.');
+    console.error('Gemini chat error:', error);
+    return;
+  }
 
-    setStatus('AI 응답 · 저장 중…');
+  setStatus('AI 응답 · 저장 중…');
+  try {
     await saveLog({
       classNumber: student.classNumber,
       studentNumber: student.studentNumber,
@@ -154,9 +162,8 @@ async function sendReply(studentMessage) {
     });
     setStatus('SUPABASE 저장됨', true);
   } catch (error) {
-    setStatus('AI 응답 오류 확인 필요');
-    addMessage('ai', '잠시 문제가 생겼어요. 다시 한 번 보내 주세요.');
-    console.error('AI chat error:', error);
+    setStatus('AI 응답 완료 · 저장 오류', false);
+    console.error('Supabase chat log error:', error);
   }
 }
 
